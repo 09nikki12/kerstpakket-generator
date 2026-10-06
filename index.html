@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="nl" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De Kerstpakketten Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xmas: {
+                            red: '#C41E3A',
+                            darkred: '#8B0000',
+                            green: '#165B33',
+                            darkgreen: '#0B3B24',
+                            gold: '#D4AF37',
+                            cream: '#FDFBF7',
+                            snow: '#F4F7F6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .festive-shadow {
+            box-shadow: 0 10px 25px -5px rgba(196, 30, 58, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 flex flex-col min-h-screen bg-slate-50">
+
+    <!-- Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-xmas-red to-xmas-darkred flex items-center justify-center text-white shadow-md shadow-xmas-red/20">
+                        <i class="fa-solid fa-gift text-2xl text-xmas-gold"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-serif font-bold text-xl sm:text-2xl text-slate-900 tracking-tight flex items-center gap-2">
+                            De Kerstpakketten Generator
+                            <span class="text-xs font-sans px-2 py-0.5 rounded-full bg-xmas-green/10 text-xmas-green font-semibold">Pro v2.0</span>
+                        </h1>
+                        <p class="text-xs text-slate-500 hidden sm:block">Creëer professionele, verkoopklare kerstpakket afbeeldingen in seconden</p>
+                    </div>
+                </div>
+
+                <!-- Actions / Wordpress Modal Button -->
+                <div class="flex items-center space-x-3">
+                    <button id="wpGuideBtn" onclick="toggleWpModal(true)" class="inline-flex items-center space-x-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 sm:px-4 py-2.5 rounded-lg transition-colors border border-slate-200">
+                        <i class="fa-brands fa-wordpress text-slate-600 text-lg"></i>
+                        <span class="hidden sm:inline">WordPress Handleiding</span>
+                        <span class="sm:hidden">WordPress</span>
+                    </button>
+                    <button onclick="resetAll()" class="inline-flex items-center space-x-1 text-xs text-slate-500 hover:text-xmas-red px-2.5 py-2 rounded-lg transition-colors">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span class="hidden md:inline">Reset</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Step Progress Indicator -->
+        <div class="mb-8">
+            <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+                <div id="step-1-indicator" class="bg-white p-3 sm:p-4 rounded-xl border-2 border-xmas-red shadow-sm flex items-center justify-center sm:justify-start space-x-3 transition-all">
+                    <div class="w-8 h-8 rounded-full bg-xmas-red text-white flex items-center justify-center font-bold text-sm shrink-0">1</div>
+                    <div class="text-left hidden sm:block">
+                        <p class="text-xs font-bold uppercase tracking-wider text-xmas-red">Stap 1</p>
+                        <p class="text-sm font-semibold text-slate-800">Kies Producten</p>
+                    </div>
+                </div>
+                <div id="step-2-indicator" class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 opacity-80 flex items-center justify-center sm:justify-start space-x-3 transition-all">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm shrink-0">2</div>
+                    <div class="text-left hidden sm:block">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Stap 2</p>
+                        <p class="text-sm font-semibold text-slate-800">Kies Stijl</p>
+                    </div>
+                </div>
+                <div id="step-3-indicator" class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 opacity-80 flex items-center justify-center sm:justify-start space-x-3 transition-all">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm shrink-0">3</div>
+                    <div class="text-left hidden sm:block">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Stap 3</p>
+                        <p class="text-sm font-semibold text-slate-800">Genereer & Download</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Column: Product Selection & Configuration (7 Cols) -->
+            <div class="lg:col-span-7 space-y-8">
+                
+                <!-- Section 1: Product Selector -->
+                <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm festive-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-packing text-xmas-red"></i> 
+                                1. Producten Bibliotheek
+                            </h2>
+                            <p class="text-xs text-slate-500">Klik of sleep producten naar jouw kerstpakket</p>
+                        </div>
+                        <span id="product-count-badge" class="bg-slate-100 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200">
+                            0 gekozen
+                        </span>
+                    </div>
+
+                    <!-- Category Filter Tabs -->
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="flex space-x-2 overflow-x-auto pb-1 custom-scrollbar text-xs font-medium">
+                            <button onclick="filterCategory('all')" class="cat-btn bg-slate-900 text-white px-3 py-1.5 rounded-lg shrink-0 transition-all" data-cat="all">Alles</button>
+                            <button onclick="filterCategory('drinks')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg shrink-0 transition-all" data-cat="drinks">Dranken</button>
+                            <button onclick="filterCategory('food')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg shrink-0 transition-all" data-cat="food">Eten & Snacks</button>
+                            <button onclick="filterCategory('deco')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg shrink-0 transition-all" data-cat="deco">Decoratie</button>
+                            <button onclick="filterCategory('custom')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg shrink-0 transition-all" data-cat="custom">Eigen Producten</button>
+                        </div>
+                        <button onclick="toggleAddProductModal(true)" class="inline-flex items-center space-x-1.5 bg-xmas-green hover:bg-xmas-darkgreen text-white text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 transition-colors shadow-sm">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span class="hidden sm:inline">Product Toevoegen</span>
+                            <span class="sm:hidden">+ Nieuw</span>
+                        </button>
+                    </div>
+
+                    <!-- Product Grid -->
+                    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[380px] overflow-y-auto p-1 custom-scrollbar">
+                        <!-- Dynamically populated JS -->
+                    </div>
+                </section>
+
+                <!-- Section 2: Style Selection -->
+                <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm">
+                    <div class="mb-4">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-xmas-gold"></i>
+                            2. Kies Fotografie Stijl
+                        </h2>
+                        <p class="text-xs text-slate-500">Selecteer de gewenste presentatie-opbouw voor de foto's</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        
+                        <!-- Option 1: Commercial -->
+                        <label class="relative border-2 border-xmas-red bg-red-50/20 rounded-xl p-4 cursor-pointer hover:border-xmas-red transition-all block group">
+                            <input type="radio" name="style_option" value="commercial" checked class="sr-only peer" onchange="updateStyleSelection()">
+                            <div class="peer-checked:ring-2 peer-checked:ring-xmas-red rounded-xl absolute inset-0 transition-all pointer-events-none"></div>
+                            <div class="flex flex-col h-full justify-between">
+                                <div>
+                                    <div class="w-full h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
+                                        <!-- Visual Graphic for Commercial -->
+                                        <div class="grid grid-cols-3 gap-1 p-2 w-full h-full opacity-80 group-hover:scale-105 transition-transform">
+                                            <div class="bg-amber-700/60 rounded"></div>
+                                            <div class="bg-red-700/60 rounded"></div>
+                                            <div class="bg-green-800/60 rounded"></div>
+                                            <div class="bg-yellow-600/60 rounded"></div>
+                                            <div class="bg-amber-900/60 rounded"></div>
+                                            <div class="bg-red-800/60 rounded"></div>
+                                        </div>
+                                        <span class="absolute bottom-1 right-1 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded">Vullend</span>
+                                    </div>
+                                    <h3 class="font-bold text-sm text-slate-900 mb-1">Commercieel</h3>
+                                    <p class="text-[11px] text-slate-600 leading-snug">Beeldvullend, zo vol mogelijk opgesteld. Gericht op maximale verkoopwaarde.</p>
+                                </div>
+                                <div class="mt-3 text-right">
+                                    <span class="inline-block w-4 h-4 rounded-full border-2 border-slate-300 peer-checked:border-xmas-red peer-checked:bg-xmas-red"></span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Option 2: Traditional Pyramid -->
+                        <label class="relative border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-xmas-red transition-all block group">
+                            <input type="radio" name="style_option" value="traditional" class="sr-only peer" onchange="updateStyleSelection()">
+                            <div class="peer-checked:ring-2 peer-checked:ring-xmas-red rounded-xl absolute inset-0 transition-all pointer-events-none"></div>
+                            <div class="flex flex-col h-full justify-between">
+                                <div>
+                                    <div class="w-full h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
+                                        <!-- Visual Graphic for Pyramid -->
+                                        <div class="flex flex-col items-center justify-center gap-1 w-full h-full p-2 opacity-80 group-hover:scale-105 transition-transform">
+                                            <div class="w-1/3 h-6 bg-green-800/70 rounded"></div>
+                                            <div class="w-2/3 h-6 bg-red-700/70 rounded"></div>
+                                            <div class="w-full h-6 bg-amber-700/70 rounded"></div>
+                                        </div>
+                                        <span class="absolute bottom-1 right-1 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded">Piramide</span>
+                                    </div>
+                                    <h3 class="font-bold text-sm text-slate-900 mb-1">Traditioneel</h3>
+                                    <p class="text-[11px] text-slate-600 leading-snug">Esthetische piramidevorm. Hoogste producten achteraan, rustige opbouw.</p>
+                                </div>
+                                <div class="mt-3 text-right">
+                                    <span class="inline-block w-4 h-4 rounded-full border-2 border-slate-300 peer-checked:border-xmas-red peer-checked:bg-xmas-red"></span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Option 3: Winter Scene -->
+                        <label class="relative border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-xmas-red transition-all block group">
+                            <input type="radio" name="style_option" value="winter" class="sr-only peer" onchange="updateStyleSelection()">
+                            <div class="peer-checked:ring-2 peer-checked:ring-xmas-red rounded-xl absolute inset-0 transition-all pointer-events-none"></div>
+                            <div class="flex flex-col h-full justify-between">
+                                <div>
+                                    <div class="w-full h-24 bg-slate-800 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
+                                        <!-- Visual Graphic for Winter -->
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-700"></div>
+                                        <div class="flex flex-col items-center justify-center gap-1 w-full h-full p-2 relative z-10 opacity-90 group-hover:scale-105 transition-transform">
+                                            <div class="w-1/3 h-5 bg-green-700/80 rounded"></div>
+                                            <div class="w-2/3 h-5 bg-red-600/80 rounded"></div>
+                                            <div class="w-full h-5 bg-amber-600/80 rounded"></div>
+                                        </div>
+                                        <span class="absolute top-1 right-1 text-slate-200 text-xs"><i class="fa-regular fa-snowflake"></i></span>
+                                        <span class="absolute bottom-1 right-1 text-[10px] bg-xmas-darkgreen text-white px-1.5 py-0.5 rounded">Winter Sfeer</span>
+                                    </div>
+                                    <h3 class="font-bold text-sm text-slate-900 mb-1">Winter Sfeer</h3>
+                                    <p class="text-[11px] text-slate-600 leading-snug">Piramidevorm geplaatst op een houten achtergrond met sneeuw & kersttakken.</p>
+                                </div>
+                                <div class="mt-3 text-right">
+                                    <span class="inline-block w-4 h-4 rounded-full border-2 border-slate-300 peer-checked:border-xmas-red peer-checked:bg-xmas-red"></span>
+                                </div>
+                            </div>
+                        </label>
+
+                    </div>
+                </section>
+
+                <!-- Generate Action Button -->
+                <div>
+                    <button id="generateBtn" onclick="generateImages()" class="w-full py-4 px-6 bg-gradient-to-r from-xmas-red to-xmas-darkred hover:from-xmas-darkred hover:to-xmas-red text-white font-bold text-base rounded-xl shadow-lg shadow-xmas-red/25 flex items-center justify-center space-x-3 transition-all transform active:scale-[0.99] border border-red-500/30">
+                        <i class="fa-solid fa-sparkles text-xmas-gold text-xl"></i>
+                        <span>Genereer Kerstpakket Afbeeldingen (3 Opties)</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Current Box Contents & Selected Items (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm sticky top-28">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-box text-xmas-green"></i> 
+                                Inhoud Kerstpakket
+                            </h3>
+                            <p class="text-xs text-slate-500">Geselecteerde artikelen</p>
+                        </div>
+                        <button onclick="clearSelected()" class="text-xs text-red-600 hover:text-red-800 font-medium">
+                            Alles wis
+                        </button>
+                    </div>
+
+                    <!-- Selected Items Interactive Drag & Drop Container -->
+                    <div id="drop-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" class="mt-4 border-2 border-dashed border-slate-200 rounded-xl p-4 bg-slate-50/50 min-h-[220px] transition-colors flex flex-col justify-between">
+                        
+                        <!-- Empty State -->
+                        <div id="empty-state" class="flex flex-col items-center justify-center py-8 text-center">
+                            <div class="w-14 h-14 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
+                                <i class="fa-solid fa-hand-pointer text-2xl"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-700">Sleep producten hiernaartoe</p>
+                            <p class="text-[11px] text-slate-400 mt-1 max-w-[200px]">of klik op een product in de catalogus om toe te voegen</p>
+                        </div>
+
+                        <!-- Selected Items List -->
+                        <div id="selected-items-list" class="space-y-2 hidden max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                            <!-- JS Populated Item Rows -->
+                        </div>
+
+                        <!-- Summary footer inside box -->
+                        <div id="box-summary" class="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 hidden">
+                            <span>Totaal artikelen:</span>
+                            <span id="total-items-qty" class="font-bold text-slate-800">0 stuks</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick tips box -->
+                    <div class="mt-4 bg-amber-50/60 border border-amber-200/60 rounded-xl p-3 flex items-start space-x-3">
+                        <i class="fa-solid fa-lightbulb text-amber-600 text-sm mt-0.5"></i>
+                        <p class="text-[11px] text-amber-900 leading-tight">
+                            <strong>Tip:</strong> Kies minstens 4 tot 8 producten voor het beste visuele resultaat in de foto compositie.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Results Section (Generated Canvas Outputs) -->
+        <section id="results-section" class="mt-12 pt-8 border-t border-slate-200 hidden scroll-mt-24">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
+    <!-- Add Custom Product Modal -->
+    <div id="addProductModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative shadow-2xl border border-slate-100">
+            <button onclick="toggleAddProductModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-5">
+                <div class="w-10 h-10 rounded-xl bg-xmas-green/10 text-xmas-green flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-base text-slate-900">Eigen Product Toevoegen</h3>
+                    <p class="text-xs text-slate-500">Voeg een nieuw artikel toe aan jouw bibliotheek</p>
+                </div>
+            </div>
+
+            <form id="addProductForm" onsubmit="handleCustomProductSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Productnaam *</label>
+                    <input type="text" id="custom-name" required placeholder="bijv. Luxe Speciaalbier Krat" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-xmas-green focus:border-xmas-green outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Categorie</label>
+                    <select id="custom-category" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-xmas-green focus:border-xmas-green outline-none bg-white">
+                        <option value="drinks">Dranken</option>
+                        <option value="food">Eten & Snacks</option>
+                        <option value="deco">Decoratie & Extra's</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Afbeelding (PNG/JPG)</label>
+                    
+                    <!-- File Upload Input -->
+                    <div class="border-2 border-dashed border-slate-300 hover:border-xmas-green rounded-xl p-3 text-center bg-slate-50 transition-colors cursor-pointer mb-2 relative">
+                        <input type="file" id="custom-file" accept="image/png, image/jpeg, image/webp" onchange="previewUploadImage(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                        <div id="file-upload-placeholder" class="space-y-1">
+                            <i class="fa-solid fa-cloud-arrow-up text-xmas-green text-xl"></i>
+                            <p class="text-xs font-semibold text-slate-700">Upload een afbeelding</p>
+                            <p class="text-[10px] text-slate-400">Sleep hier een bestand in of klik om te bladeren</p>
+                        </div>
+                        <div id="file-upload-preview" class="hidden flex items-center justify-center space-x-2">
+                            <img id="preview-img-element" src="" class="h-12 w-12 object-contain rounded bg-white p-1 border">
+                            <span id="preview-file-name" class="text-xs text-slate-700 font-medium truncate max-w-[180px]">afbeelding.png</span>
+                        </div>
+                    </div>
+
+                    <!-- Alternative: Image URL -->
+                    <div class="flex items-center my-2 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                        <div class="flex-grow border-t border-slate-200"></div>
+                        <span class="px-2">Of via URL</span>
+                        <div class="flex-grow border-t border-slate-200"></div>
+                    </div>
+
+                    <input type="url" id="custom-url" oninput="handleUrlInput()" placeholder="https://voorbeeld.nl/afbeelding.png" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-xmas-green focus:border-xmas-green outline-none">
+                </div>
+
+                <div class="pt-2 flex items-center justify-end space-x-2">
+                    <button type="button" onclick="toggleAddProductModal(false)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors">
+                        Annuleren
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-xmas-green hover:bg-xmas-darkgreen text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+                        Product Opslaan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WordPress Integration Modal -->
+    <div id="wpModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto custom-scrollbar relative shadow-2xl">
+            <button onclick="toggleWpModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fa-brands fa-wordpress"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-slate-900">WordPress Integratie Gids</h3>
+                    <p class="text-xs text-slate-500">Hoe gebruik je deze generator op jouw gratis domein / WordPress site</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-600">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-xmas-red text-white flex items-center justify-center text-[10px]">1</span>
+                        Methode A: Insluiten via iFrame (Aanbevolen)
+                    </h4>
+                    <p class="mb-2">Upload dit HTML-bestand naar je hosting (bijv. via cPanel of FTP als <code>generator.html</code>). Plaats vervolgens een <strong>Custom HTML blok</strong> in je WordPress pagina met deze code:</p>
+                    <pre class="bg-slate-900 text-slate-200 p-3 rounded-lg overflow-x-auto text-[11px] font-mono select-all">&lt;iframe src="https://jouwdomein.nl/generator.html" width="100%" height="900" frameborder="0" style="border:none; border-radius:12px;"&gt;&lt;/iframe&gt;</pre>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-xmas-red text-white flex items-center justify-center text-[10px]">2</span>
+                        Methode B: Standalone subdomein
+                    </h4>
+                    <p>Je kunt deze generator draaien op een apart adres zoals <code>generator.jouwdomein.nl</code> en een knop op je WordPress site maken met "Open Kerstpakketten Generator".</p>
+                </div>
+
+                <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-amber-900">
+                    <p class="font-semibold text-xs mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Voordelen van deze HTML5 Canvas Generator:</p>
+                    <ul class="list-disc list-inside text-[11px] space-y-1 text-amber-800">
+                        <li>Werkt 100% in de browser (geen zware server-kosten of API-sleutels nodig).</li>
+                        <li>Snel en direct downloadbaar als PNG voor verkopers en klanten.</li>
+                        <li>Volledig responsive op mobiel, tablet en desktop.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 text-right">
+                <button onclick="toggleWpModal(false)" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold">
+                    Begrepen & Sluiten
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-xmas-gold text-base" id="toast-icon"></i>
+        <span id="toast-message" class="text-xs font-semibold">Bericht...</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 bg-white py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            <p>© De Kerstpakketten Generator • Professionele Tool voor Kerstpakket Visualisaties</p>
+        </div>
+    </footer>
+
+    <script>
+        // Base Product Database
+        const BASE_PRODUCTS = [
+            { id: 'chocomel', name: 'Chocomel Blik', category: 'drinks', color: '#FFB800', textColor: '#000', icon: 'fa-glass-water', height: 90, width: 45, bgGradient: ['#FFB800', '#E6A100'] },
+            { id: 'wijn_rood', name: 'Fles Rode Wijn', category: 'drinks', color: '#722F37', textColor: '#fff', icon: 'fa-wine-bottle', height: 160, width: 45, bgGradient: ['#722F37', '#4A1F24'] },
+            { id: 'prosecco', name: 'Prosecco Fles', category: 'drinks', color: '#D4AF37', textColor: '#000', icon: 'fa-champagne-glasses', height: 170, width: 48, bgGradient: ['#F3E5AB', '#D4AF37'] },
+            { id: 'kerstbrood', name: 'Feestelijk Kerstbrood', category: 'food', color: '#C88A58', textColor: '#fff', icon: 'fa-bread-slice', height: 75, width: 110, bgGradient: ['#D2905D', '#A16A3C'] },
+            { id: 'pretzels', name: 'Pretzels Zak', category: 'food', color: '#E07A5F', textColor: '#fff', icon: 'fa-cookie', height: 110, width: 75, bgGradient: ['#E07A5F', '#B55239'] },
+            { id: 'popcorn', name: 'Popcorn Zout/Zoet', category: 'food', color: '#F4A261', textColor: '#000', icon: 'fa-box-tissue', height: 120, width: 70, bgGradient: ['#F4A261', '#E76F51'] },
+            { id: 'toast', name: 'Luxe Toast', category: 'food', color: '#264653', textColor: '#fff', icon: 'fa-square', height: 85, width: 85, bgGradient: ['#2A9D8F', '#264653'] },
+            { id: 'chips', name: 'Ambachtelijke Chips', category: 'food', color: '#E76F51', textColor: '#fff', icon: 'fa-cubes', height: 130, width: 80, bgGradient: ['#F4A261', '#E76F51'] },
+            { id: 'kaas', name: 'Boerenkaasje Gold', category: 'food', color: '#E9C46A', textColor: '#000', icon: 'fa-cheese', height: 60, width: 90, bgGradient: ['#F4A261', '#E9C46A'] },
+            { id: 'borrelplank', name: 'Houten Borrelplank', category: 'deco', color: '#8D5B4C', textColor: '#fff', icon: 'fa-layer-group', height: 180, width: 35, bgGradient: ['#A06857', '#6A4135'] },
+            { id: 'kerstbal', name: 'Glazen Kerstbal', category: 'deco', color: '#C41E3A', textColor: '#fff', icon: 'fa-certificate', height: 55, width: 55, bgGradient: ['#C41E3A', '#8B0000'] },
+            { id: 'chocolade', name: 'Kerst Chocolade', category: 'food', color: '#4A2C2A', textColor: '#fff', icon: 'fa-gift', height: 70, width: 80, bgGradient: ['#5C3735', '#38201E'] }
+        ];
+
+        let customProducts = [];
+        let productDatabase = [];
+        let selectedItems = []; // Array of { product, quantity }
+        let selectedStyle = 'commercial';
+        let draggedProductId = null;
+        let uploadedImageBase64 = null;
+        const loadedImageCache = {};
+
+        // Initialize App & Load Saved Custom Products
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCustomProductsFromStorage();
+            refreshDatabase();
+            renderProductCatalog('all');
+            updateSelectedUI();
+        });
+
+        function loadCustomProductsFromStorage() {
+            try {
+                const stored = localStorage.getItem('kerstpakket_custom_products');
+                if (stored) {
+                    customProducts = JSON.parse(stored);
+                }
+            } catch(e) {
+                console.error('Fout bij laden van opgeslagen producten:', e);
+            }
+        }
+
+        function saveCustomProductsToStorage() {
+            try {
+                localStorage.setItem('kerstpakket_custom_products', JSON.stringify(customProducts));
+            } catch(e) {
+                showToast('Aanwijzing: Lokale opslaglimiet overschreden, product niet bewaard.');
+            }
+        }
+
+        function refreshDatabase() {
+            productDatabase = [...BASE_PRODUCTS, ...customProducts];
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = 'cat-btn bg-slate-900 text-white px-3 py-1.5 rounded-lg shrink-0 transition-all';
+                } else {
+                    btn.className = 'cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg shrink-0 transition-all';
+                }
+            });
+            renderProductCatalog(cat);
+        }
+
+        function renderProductCatalog(cat) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            let filtered = productDatabase;
+            if (cat === 'custom') {
+                filtered = customProducts;
+            } else if (cat !== 'all') {
+                filtered = productDatabase.filter(p => p.category === cat);
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-8 text-center text-slate-400">
+                        <i class="fa-solid fa-box-open text-2xl mb-2"></i>
+                        <p class="text-xs">Geen producten gevonden in deze categorie.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-center cursor-pointer hover:border-xmas-red hover:bg-white hover:shadow-md transition-all group select-none flex flex-col justify-between h-[120px] relative';
+                card.draggable = true;
+                
+                card.ondragstart = (e) => {
+                    draggedProductId = p.id;
+                    e.dataTransfer.setData('text/plain', p.id);
+                };
+
+                card.onclick = () => addProduct(p.id);
+
+                // Check if product is custom
+                const isCustom = p.isCustom;
+                const deleteBtnHtml = isCustom ? `
+                    <button onclick="deleteCustomProduct(event, '${p.id}')" title="Verwijder eigen product" class="absolute top-1 right-1 bg-white/90 hover:bg-red-600 text-slate-400 hover:text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow transition-colors z-10">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                ` : '';
+
+                const customBadgeHtml = isCustom ? `<span class="absolute top-1 left-1 bg-xmas-green text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow-sm">Eigen</span>` : '';
+
+                let visualContentHtml = '';
+                if (p.imageSrc) {
+                    visualContentHtml = `<img src="${p.imageSrc}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform">`;
+                } else {
+                    visualContentHtml = `<i class="fa-solid ${p.icon} text-lg" style="color: ${p.textColor}"></i>`;
+                }
+
+                card.innerHTML = `
+                    ${customBadgeHtml}
+                    ${deleteBtnHtml}
+                    <div class="w-full h-12 rounded-lg flex items-center justify-center text-white shadow-sm mb-1 group-hover:scale-105 transition-transform overflow-hidden bg-white/80 p-1" style="${p.imageSrc ? 'border:1px solid #e2e8f0;' : `background: linear-gradient(135deg, ${p.bgGradient[0]}, ${p.bgGradient[1]})`}">
+                        ${visualContentHtml}
+                    </div>
+                    <div>
+                        <p class="font-semibold text-[11px] text-slate-800 line-clamp-1">${p.name}</p>
+                        <p class="text-[9px] text-slate-400 capitalize">${p.category}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleAddProductModal(show) {
+            const modal = document.getElementById('addProductModal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+                resetAddProductForm();
+            }
+        }
+
+        function resetAddProductForm() {
+            document.getElementById('addProductForm').reset();
+            uploadedImageBase64 = null;
+            document.getElementById('file-upload-placeholder').classList.remove('hidden');
+            document.getElementById('file-upload-preview').classList.add('hidden');
+        }
+
+        function previewUploadImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageBase64 = e.target.result;
+                document.getElementById('preview-img-element').src = uploadedImageBase64;
+                document.getElementById('preview-file-name').innerText = file.name;
+                document.getElementById('file-upload-placeholder').classList.add('hidden');
+                document.getElementById('file-upload-preview').classList.remove('hidden');
+                document.getElementById('custom-url').value = ''; // clear URL input if file is picked
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleUrlInput() {
+            const url = document.getElementById('custom-url').value;
+            if (url) {
+                uploadedImageBase64 = null;
+                document.getElementById('file-upload-placeholder').classList.remove('hidden');
+                document.getElementById('file-upload-preview').classList.add('hidden');
+                document.getElementById('custom-file').value = '';
+            }
+        }
+
+        function handleCustomProductSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('custom-name').value.trim();
+            const category = document.getElementById('custom-category').value;
+            const urlInput = document.getElementById('custom-url').value.trim();
+
+            const imageSrc = uploadedImageBase64 || urlInput || null;
+
+            const newProduct = {
+                id: 'custom_' + Date.now(),
+                name: name,
+                category: category,
+                color: '#165B33',
+                textColor: '#ffffff',
+                icon: 'fa-box',
+                height: 100,
+                width: 80,
+                bgGradient: ['#165B33', '#0B3B24'],
+                imageSrc: imageSrc,
+                isCustom: true
+            };
+
+            customProducts.push(newProduct);
+            saveCustomProductsToStorage();
+            refreshDatabase();
+            renderProductCatalog('all');
+            toggleAddProductModal(false);
+
+            showToast(`Product "${name}" toegevoegd aan bibliotheek!`);
+            
+            // Automatically add to current box
+            addProduct(newProduct.id);
+        }
+
+        function deleteCustomProduct(event, id) {
+            event.stopPropagation();
+            customProducts = customProducts.filter(p => p.id !== id);
+            saveCustomProductsToStorage();
+            refreshDatabase();
+            
+            // Remove from selected items if active
+            removeItem(id);
+            renderProductCatalog('all');
+            showToast('Eigen product verwijderd.');
+        }
+
+        function addProduct(id) {
+            const prod = productDatabase.find(p => p.id === id);
+            if (!prod) return;
+
+            const existing = selectedItems.find(item => item.product.id === id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                selectedItems.push({ product: prod, quantity: 1 });
+            }
+
+            updateSelectedUI();
+            showToast(`"${prod.name}" toegevoegd aan pakket`);
+        }
+
+        function updateQuantity(id, change) {
+            const itemIndex = selectedItems.findIndex(item => item.product.id === id);
+            if (itemIndex > -1) {
+                selectedItems[itemIndex].quantity += change;
+                if (selectedItems[itemIndex].quantity <= 0) {
+                    selectedItems.splice(itemIndex, 1);
+                }
+            }
+            updateSelectedUI();
+        }
+
+        function removeItem(id) {
+            selectedItems = selectedItems.filter(item => item.product.id !== id);
+            updateSelectedUI();
+        }
+
+        function clearSelected() {
+            selectedItems = [];
+            updateSelectedUI();
+            showToast('Pakket leeggemaakt');
+        }
+
+        function resetAll() {
+            clearSelected();
+            document.getElementById('results-section').classList.add('hidden');
+        }
+
+        // Drag & Drop Handlers
+        function handleDragOver(e) {
+            e.preventDefault();
+            const zone = document.getElementById('drop-zone');
+            zone.classList.add('border-xmas-red', 'bg-red-50/30');
+        }
+
+        function handleDragLeave(e) {
+            const zone = document.getElementById('drop-zone');
+            zone.classList.remove('border-xmas-red', 'bg-red-50/30');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            handleDragLeave(e);
+            const id = e.dataTransfer.getData('text/plain') || draggedProductId;
+            if (id) {
+                addProduct(id);
+                draggedProductId = null;
+            }
+        }
+
+        function updateSelectedUI() {
+            const emptyState = document.getElementById('empty-state');
+            const list = document.getElementById('selected-items-list');
+            const summary = document.getElementById('box-summary');
+            const countBadge = document.getElementById('product-count-badge');
+            const totalQtySpan = document.getElementById('total-items-qty');
+
+            const totalQty = selectedItems.reduce((sum, i) => sum + i.quantity, 0);
+
+            countBadge.innerText = `${totalQty} artikelen`;
+            totalQtySpan.innerText = `${totalQty} stuks`;
+
+            if (selectedItems.length === 0) {
+                emptyState.classList.remove('hidden');
+                list.classList.add('hidden');
+                summary.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                list.classList.remove('hidden');
+                summary.classList.remove('hidden');
+
+                list.innerHTML = '';
+                selectedItems.forEach(item => {
+                    const p = item.product;
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2 shadow-sm text-xs';
+
+                    let visualThumb = '';
+                    if (p.imageSrc) {
+                        visualThumb = `<img src="${p.imageSrc}" class="w-7 h-7 object-contain rounded bg-slate-50 p-0.5 border">`;
+                    } else {
+                        visualThumb = `
+                            <div class="w-7 h-7 rounded flex items-center justify-center text-white shrink-0" style="background: linear-gradient(135deg, ${p.bgGradient[0]}, ${p.bgGradient[1]})">
+                                <i class="fa-solid ${p.icon} text-xs"></i>
+                            </div>
+                        `;
+                    }
+
+                    row.innerHTML = `
+                        <div class="flex items-center space-x-2.5">
+                            ${visualThumb}
+                            <div>
+                                <p class="font-bold text-slate-800 text-xs">${p.name}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex items-center border border-slate-200 rounded-md bg-slate-50">
+                                <button onclick="updateQuantity('${p.id}', -1)" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-200 rounded-l">-</button>
+                                <span class="w-6 text-center font-bold text-xs text-slate-800">${item.quantity}</span>
+                                <button onclick="updateQuantity('${p.id}', 1)" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-200 rounded-r">+</button>
+                            </div>
+                            <button onclick="removeItem('${p.id}')" class="text-slate-400 hover:text-red-600 p-1">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                    list.appendChild(row);
+                });
+            }
+        }
+
+        function updateStyleSelection() {
+            const selectedRadio = document.querySelector('input[name="style_option"]:checked');
+            if (selectedRadio) {
+                selectedStyle = selectedRadio.value;
+            }
+        }
+
+        async function generateImages() {
+            if (selectedItems.length === 0) {
+                showToast('Voeg eerst producten toe aan je kerstpakket!');
+                return;
+            }
+
+            // Preload images if any custom products with images exist
+            await preloadAllProductImages();
+
+            const resultsSec = document.getElementById('results-section');
+            resultsSec.classList.remove('hidden');
+            
+            // Scroll smoothly to results
+            resultsSec.scrollIntoView({ behavior: 'smooth' });
+
+            // Update style badge display name
+            const badge = document.getElementById('current-style-badge');
+            const styleNames = {
+                commercial: 'Stijl: Commercieel (Beeldvullend)',
+                traditional: 'Stijl: Traditioneel (Piramide)',
+                winter: 'Stijl: Winter Sfeer (Achtergrond)'
+            };
+            badge.innerText = styleNames[selectedStyle];
+
+            // Render 3 variants on 3 canvases
+            renderCanvas('canvas-1', selectedStyle, 0);
+            renderCanvas('canvas-2', selectedStyle, 1);
+            renderCanvas('canvas-3', selectedStyle, 2);
+
+            showToast('3 Kerstpakket afbeeldingen gegenereerd!');
+            
+            // Update Step Indicators
+            document.getElementById('step-3-indicator').classList.add('border-xmas-red', 'opacity-100');
+            document.getElementById('step-3-indicator').querySelector('.w-8').classList.add('bg-xmas-red', 'text-white');
+        }
+
+        function preloadAllProductImages() {
+            const promises = [];
+            selectedItems.forEach(item => {
+                const p = item.product;
+                if (p.imageSrc && !loadedImageCache[p.id]) {
+                    const promise = new Promise((resolve) => {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = () => {
+                            loadedImageCache[p.id] = img;
+                            resolve();
+                        };
+                        img.onerror = () => {
+                            console.warn('Kan afbeelding niet laden voor product:', p.name);
+                            resolve();
+                        };
+                        img.src = p.imageSrc;
+                    });
+                    promises.push(promise);
+                }
+            });
+            return Promise.all(promises);
+        }
+
+        // Core Renderer for the 3 Variations
+        function renderCanvas(canvasId, style, variantIndex) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Clear
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. Draw Background
+            drawBackground(ctx, w, h, style);
+
+            // 2. Prepare Flattened Items Array based on Quantities
+            let itemsToDraw = [];
+            selectedItems.forEach(item => {
+                for(let i=0; i < item.quantity; i++) {
+                    itemsToDraw.push({ ...item.product });
+                }
+            });
+
+            // 3. Arrange Layout Based on Selected Style & Variant Shift
+            arrangeAndDrawProducts(ctx, w, h, itemsToDraw, style, variantIndex);
+
+            // 4. Draw Christmas Ribbon / Branding Overlay
+            drawFestiveDetails(ctx, w, h, style);
+        }
+
+        function drawBackground(ctx, w, h, style) {
+            if (style === 'winter') {
+                const grad = ctx.createLinearGradient(0, 0, 0, h);
+                grad.addColorStop(0, '#1E293B');
+                grad.addColorStop(0.6, '#334155');
+                grad.addColorStop(1, '#0F172A');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.lineWidth = 2;
+                for(let y=50; y<h; y+=60) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(w, y);
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = '#54382B';
+                ctx.fillRect(0, h * 0.7, w, h * 0.3);
+                
+                ctx.fillStyle = '#E2E8F0';
+                ctx.beginPath();
+                ctx.ellipse(w/2, h * 0.7, w * 0.55, 12, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                for(let i=0; i<30; i++) {
+                    const sx = (i * 37) % w;
+                    const sy = (i * 23) % (h * 0.7);
+                    const sr = (i % 3) + 1.5;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+            } else if (style === 'traditional') {
+                const grad = ctx.createRadialGradient(w/2, h/2, 50, w/2, h/2, w);
+                grad.addColorStop(0, '#FFFFFF');
+                grad.addColorStop(1, '#E2E8F0');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+
+                ctx.fillStyle = 'rgba(0,0,0,0.06)';
+                ctx.beginPath();
+                ctx.ellipse(w/2, h * 0.82, w * 0.4, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+            } else {
+                ctx.fillStyle = '#FAFAFA';
+                ctx.fillRect(0, 0, w, h);
+
+                const grad = ctx.createRadialGradient(w/2, h*0.4, 30, w/2, h*0.4, w*0.6);
+                grad.addColorStop(0, '#FFFFFF');
+                grad.addColorStop(1, '#F1F5F9');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+            }
+        }
+
+        function arrangeAndDrawProducts(ctx, w, h, items, style, variant) {
+            const count = items.length;
+            if (count === 0) return;
+
+            if (style === 'commercial') {
+                let sorted = [...items];
+                if (variant === 1) sorted.reverse();
+                if (variant === 2) sorted.sort(() => 0.5 - Math.random());
+
+                const cols = count > 6 ? 4 : (count > 3 ? 3 : 2);
+                const rows = Math.ceil(count / cols);
+                const cellW = (w - 80) / cols;
+                const cellH = (h - 120) / rows;
+
+                sorted.forEach((item, idx) => {
+                    const c = idx % cols;
+                    const r = Math.floor(idx / cols);
+                    
+                    const jitterX = (variant === 1 ? (idx % 2 === 0 ? 5 : -5) : 0);
+                    const jitterY = (variant === 2 ? (idx % 3 === 0 ? -8 : 4) : 0);
+
+                    const x = 40 + c * cellW + cellW/2 + jitterX;
+                    const y = 60 + r * cellH + cellH/2 + jitterY;
+
+                    drawProductCardOnCanvas(ctx, item, x, y, Math.min(cellW * 0.85, 110), Math.min(cellH * 0.85, 130));
+                });
+
+            } else {
+                let sorted = [...items].sort((a,b) => b.height - a.height);
+                
+                if (variant === 1) {
+                    const tallest = sorted.shift();
+                    if(tallest) sorted.push(tallest);
+                } else if (variant === 2) {
+                    sorted.sort((a,b) => a.width - b.width);
+                }
+
+                const backRow = [];
+                const midRow = [];
+                const frontRow = [];
+
+                sorted.forEach((item, index) => {
+                    if (index < Math.ceil(count * 0.3)) {
+                        backRow.push(item);
+                    } else if (index < Math.ceil(count * 0.7)) {
+                        midRow.push(item);
+                    } else {
+                        frontRow.push(item);
+                    }
+                });
+
+                drawRow(ctx, backRow, w/2, h * 0.48, w * 0.7, 100);
+                drawRow(ctx, midRow, w/2, h * 0.62, w * 0.8, 95);
+                drawRow(ctx, frontRow, w/2, h * 0.75, w * 0.85, 90);
+            }
+        }
+
+        function drawRow(ctx, rowItems, centerX, centerY, rowWidth, itemScale) {
+            if (rowItems.length === 0) return;
+            const spacing = rowWidth / (rowItems.length + 1);
+            const startX = centerX - rowWidth/2;
+
+            rowItems.forEach((item, i) => {
+                const x = startX + spacing * (i + 1);
+                drawProductCardOnCanvas(ctx, item, x, centerY, item.width * (itemScale/100), item.height * (itemScale/100));
+            });
+        }
+
+        // Draw Individual Product Render Graphic or Custom Image
+        function drawProductCardOnCanvas(ctx, product, x, y, renderW, renderH) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Drop Shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetY = 6;
+
+            const loadedImg = loadedImageCache[product.id];
+
+            if (loadedImg) {
+                // Render Uploaded Image directly on Canvas
+                const aspect = loadedImg.width / loadedImg.height;
+                let drawW = renderW;
+                let drawH = renderW / aspect;
+
+                if (drawH > renderH * 1.2) {
+                    drawH = renderH * 1.2;
+                    drawW = drawH * aspect;
+                }
+
+                ctx.drawImage(loadedImg, -drawW / 2, -drawH / 2, drawW, drawH);
+
+            } else {
+                // Render Default Styled Card
+                const rx = -renderW / 2;
+                const ry = -renderH / 2;
+
+                const grad = ctx.createLinearGradient(rx, ry, rx + renderW, ry + renderH);
+                grad.addColorStop(0, product.bgGradient[0]);
+                grad.addColorStop(1, product.bgGradient[1]);
+                ctx.fillStyle = grad;
+
+                const radius = 8;
+                ctx.beginPath();
+                ctx.moveTo(rx + radius, ry);
+                ctx.lineTo(rx + renderW - radius, ry);
+                ctx.quadraticCurveTo(rx + renderW, ry, rx + renderW, ry + radius);
+                ctx.lineTo(rx + renderW, ry + renderH - radius);
+                ctx.quadraticCurveTo(rx + renderW, ry + renderH, rx + renderW - radius, ry + renderH);
+                ctx.lineTo(rx + radius, ry + renderH);
+                ctx.quadraticCurveTo(rx, ry + renderH, rx, ry + renderH - radius);
+                ctx.lineTo(rx, ry + radius);
+                ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.shadowColor = 'transparent';
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.fillStyle = product.textColor;
+                ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                const words = product.name.split(' ');
+                if (words.length > 1) {
+                    ctx.fillText(words[0], 0, -6);
+                    ctx.fillText(words.slice(1).join(' '), 0, 10);
+                } else {
+                    ctx.fillText(product.name, 0, 0);
+                }
+
+                ctx.fillStyle = '#D4AF37'; // Gold Ribbon Line
+                ctx.fillRect(-renderW/2, renderH/2 - 6, renderW, 3);
+            }
+
+            ctx.restore();
+        }
+
+        function drawFestiveDetails(ctx, w, h, style) {
+            ctx.save();
+
+            const boxY = h * 0.82;
+            const boxH = h * 0.14;
+            const boxW = w * 0.85;
+            const boxX = (w - boxW) / 2;
+
+            const boxGrad = ctx.createLinearGradient(boxX, boxY, boxX, boxY + boxH);
+            boxGrad.addColorStop(0, '#C41E3A');
+            boxGrad.addColorStop(1, '#8B0000');
+            ctx.fillStyle = boxGrad;
+
+            ctx.beginPath();
+            ctx.roundRect(boxX, boxY, boxW, boxH, [4, 4, 12, 12]);
+            ctx.fill();
+
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#D4AF37';
+            ctx.fillRect(w/2 - 12, boxY, 24, boxH);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px "Playfair Display", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Vrolijk Kerstfeest', w/2, boxY + boxH/2 + 2);
+
+            ctx.restore();
+        }
+
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const image = canvas.toDataURL('image/png');
+            
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = image;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast(`Afbeelding "${filename}" gedownload!`);
+        }
+
+        function toggleWpModal(show) {
+            const modal = document.getElementById('wpModal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgSpan = document.getElementById('toast-message');
+            msgSpan.innerText = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
